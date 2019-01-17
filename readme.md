@@ -1,9 +1,10 @@
 json2xls
 ========
 
-[![Build Status](https://travis-ci.org/rikkertkoppes/json2xls.png?branch=master)](https://travis-ci.org/rikkertkoppes/json2xls)
+This is a fork of Rikkert Koppes work, but adding headers support. Adding of header support was done by sergiyvoytovych,
+I'm just adding his changes among zcqno1 corrections on it, as Rikkert Koppes one seems abandoned.
 
-utility to convert json to a excel file, based on [Node-Excel-Export](https://github.com/functionscope/Node-Excel-Export)
+Utility to convert json to a excel file, based on [Node-Excel-Export](https://github.com/functionscope/Node-Excel-Export)
 
 Installation
 ------------
@@ -15,6 +16,7 @@ Usage
 
 Use to save as file:
 
+```javascript
     var json2xls = require('json2xls');
     var json = {
         foo: 'bar',
@@ -26,9 +28,11 @@ Use to save as file:
     var xls = json2xls(json);
 
     fs.writeFileSync('data.xlsx', xls, 'binary');
+```
 
 Or use as express middleware. It adds a convenience `xls` method to the response object to immediately output an excel as download.
 
+```javascript
     var jsonArr = [{
         foo: 'bar',
         qux: 'moo',
@@ -47,6 +51,7 @@ Or use as express middleware. It adds a convenience `xls` method to the response
     app.get('/',function(req, res) {
         res.xls('data.xlsx', jsonArr);
     });
+```
 
 Options
 -------
@@ -63,24 +68,48 @@ The following options are supported:
         - array: a list of names of fields to be exported, in that order
         - object: a map of names of fields to be exported and the types of those fields. Supported types are 'number','string','bool'
 
-Example:
+### Example:
 
-    var json2xls = require('json2xls');
-    var json = {
-        foo: 'bar',
-        qux: 'moo',
-        poo: 123,
-        stux: new Date()
+```javascript
+var json2xls = require('json2xls');
+var json = {
+    foo: 'bar',
+    qux: 'moo',
+    poo: 123,
+    stux: new Date()
+}
+
+//export only the field 'poo'
+var xls = json2xls(json,{
+    fields: ['poo']
+});
+
+//export only the field 'poo' as string
+var xls = json2xls(json,{
+    fields: {poo:'string'}
+});
+
+fs.writeFileSync('data.xlsx', xls, 'binary');
+```
+
+### Example with headers:
+
+```javascript
+var json2xls = require('json2xls');
+var json = {
+    foo: 'bar',
+    qux: 'moo',
+    poo: 123,
+    stux: new Date()
+}
+
+//export only the field 'poo'
+var xls = json2xls(json,{
+    fields: {
+        'poo':{header:'Some Header for poo', type:'number'},
+        'qux':{header:'Some Header for qux', type:'string'}
     }
+});
 
-    //export only the field 'poo'
-    var xls = json2xls(json,{
-        fields: ['poo']
-    });
-
-    //export only the field 'poo' as string
-    var xls = json2xls(json,{
-        fields: {poo:'string'}
-    });
-
-    fs.writeFileSync('data.xlsx', xls, 'binary');
+fs.writeFileSync('data.xlsx', xls, 'binary');
+```
